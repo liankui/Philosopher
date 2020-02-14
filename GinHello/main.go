@@ -1,15 +1,10 @@
 package main
 
 import (
-	"github.com/gin-gonic/gin"
-	"net/http"
+	"github.com/yueekee/Philosopher/GinHello/initRouter"
 )
 
 func main() {
-	router := gin.Default()
-
-	router.GET("/", func(context *gin.Context) {
-		context.String(http.StatusOK, "hello gin")
-	})
+	router := initRouter.SetupRouter()
 	router.Run()
 }
