@@ -9,16 +9,17 @@ import (
 
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
-	router.GET("/user/:name", handler.UserSave)
-	router.GET("/user", handler.UserSaveByQuery)
 
-	router.GET("/", retHelloGinAndMethod)
-	router.POST("/", retHelloGinAndMethod)
-	router.PUT("/", retHelloGinAndMethod)
-	router.DELETE("/", retHelloGinAndMethod)
-	router.PATCH("/", retHelloGinAndMethod)
-	router.HEAD("/", retHelloGinAndMethod)
-	router.OPTIONS("/", retHelloGinAndMethod)
+	userRouter := router.Group("/user")
+	{
+		userRouter.GET("/:name", handler.UserSave)
+		userRouter.GET("", handler.UserSaveByQuery)
+	}
+
+	indexRouter := router.Group("/")
+	{
+		indexRouter.Any("", retHelloGinAndMethod)
+	}
 
 	return router
 }
