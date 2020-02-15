@@ -14,5 +14,5 @@ func TestIndexSetupRouter(t *testing.T) {
 	request, _ := http.NewRequest(http.MethodGet, "/", nil)
 	router.ServeHTTP(w, request)
 	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "hello gin", w.Body.String())
+	assert.Equal(t, "hello gin get method", w.Body.String())
 }
