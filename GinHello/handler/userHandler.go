@@ -2,6 +2,7 @@ package handler
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/yueekee/Philosopher/GinHello/model"
 	"net/http"
 )
 
@@ -20,8 +21,10 @@ func UserSaveByQuery(ctx *gin.Context) {
 }
 
 func UserRegister(ctx *gin.Context) {
-	email := ctx.PostForm("email")
-	password := ctx.DefaultPostForm("password", "123456")
-	passwordAgain := ctx.DefaultPostForm("password-again", "123456")
-	println("email", email, "password", password, "password again", passwordAgain)
+	var user model.UserModel
+	if err := ctx.ShouldBind(&user); err != nil {
+		println("err ->", err.Error())
+		return
+	}
+	println("email", user.Email, "password", user.Password, "password again", user.PasswordAgain)
 }
