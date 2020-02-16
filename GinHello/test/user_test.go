@@ -1,6 +1,7 @@
 package test
 
 import (
+	"bytes"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/yueekee/Philosopher/GinHello/initRouter"
@@ -53,9 +54,21 @@ func TestUserRegister(t *testing.T) {
 	value := url.Values{}
 	value.Add("email", "yuekewin@gmail.com")
 	value.Add("password", "123456")
-	value.Add("password-agein", "123456")
+	value.Add("password-again", "123456")
 	w := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodPost, "/user/register", nil)
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded; param=value")
+	router.ServeHTTP(w, request)
+	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestUserRegisterError(t *testing.T) {
+	value := url.Values{}
+	value.Add("email", "yuekn@gmail.com")
+	value.Add("password", "123456")
+	value.Add("password-again", "asda")
+	w := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPost, "/user/register", bytes.NewBufferString(value.Encode()))
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded; param=value")
 	router.ServeHTTP(w, request)
 	assert.Equal(t, http.StatusOK, w.Code)
