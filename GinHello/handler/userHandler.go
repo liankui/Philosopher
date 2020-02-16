@@ -24,7 +24,9 @@ func UserRegister(ctx *gin.Context) {
 	var user model.UserModel
 	if err := ctx.ShouldBind(&user); err != nil {
 		println("err ->", err.Error())
-		return
+		ctx.String(http.StatusBadRequest, "输入的数据不合法")
+	} else {
+		println("email", user.Email, "password", user.Password, "password again", user.PasswordAgain)
+		ctx.Redirect(http.StatusMovedPermanently, "/")
 	}
-	println("email", user.Email, "password", user.Password, "password again", user.PasswordAgain)
 }
