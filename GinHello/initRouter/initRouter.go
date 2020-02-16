@@ -8,7 +8,11 @@ import (
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
-	router.LoadHTMLGlob("templates/*")  // 注意这里templates前面没有/
+	if mode := gin.Mode(); mode == gin.TestMode {
+		router.LoadHTMLGlob("./../templates/*")
+	} else {
+		router.LoadHTMLGlob("templates/*")
+	}
 
 	userRouter := router.Group("/user")
 	{
