@@ -24,5 +24,4 @@ func UserRegister(ctx *gin.Context) {
 	password := ctx.DefaultPostForm("password", "123456")
 	passwordAgain := ctx.DefaultPostForm("password-again", "123456")
 	println("email", email, "password", password, "password again", passwordAgain)
-
 }

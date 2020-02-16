@@ -1,13 +1,22 @@
 package test
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/yueekee/Philosopher/GinHello/initRouter"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strconv"
 	"testing"
 )
+
+var router *gin.Engine
+
+func init() {
+	gin.SetMode(gin.TestMode)
+	router = initRouter.SetupRouter()
+}
 
 func TestUserSave(t *testing.T) {
 	username := "eric"
@@ -38,4 +47,16 @@ func TestUserSaveWithoutAge(t *testing.T) {
 	router.ServeHTTP(w, request)
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, "用户:"+username+"年龄:27"+"已经保存", w.Body.String())
+}
+
+func TestUserRegister(t *testing.T) {
+	value := url.Values{}
+	value.Add("email", "yuekewin@gmail.com")
+	value.Add("password", "123456")
+	value.Add("password-agein", "123456")
+	w := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPost, "/user/register", nil)
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded; param=value")
+	router.ServeHTTP(w, request)
+	assert.Equal(t, http.StatusOK, w.Code)
 }

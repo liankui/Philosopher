@@ -1,8 +1,10 @@
 package initRouter
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/yueekee/Philosopher/GinHello/handler"
+	"os"
 )
 
 func SetupRouter() *gin.Engine {
@@ -13,9 +15,11 @@ func SetupRouter() *gin.Engine {
 
 	if mode := gin.Mode(); mode == gin.TestMode {
 		router.LoadHTMLGlob("./../templates/*")
+		//router.LoadHTMLGlob(filepath.Join(os.Getenv("GOPATH"), `src/github.com/yueekee/Philosopher/GinHello/templates/*`))
 	} else {
 		router.LoadHTMLGlob("templates/*")
 	}
+	fmt.Println("os.Args:", os.Args)
 
 	userRouter := router.Group("/user")
 	{

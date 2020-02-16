@@ -16,18 +16,10 @@ func init() {
 	router = initRouter.SetupRouter()
 }
 
-func TestIndexSetupRouter(t *testing.T) {
-	w := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, "/", nil)
-	router.ServeHTTP(w, request)
-	assert.Equal(t, http.StatusOK, w.Code)
-	assert.Equal(t, "hello gin get method", w.Body.String())
-}
-
 func TestIndexHtml(t *testing.T) {
 	w := httptest.NewRecorder()
-	request, _ := http.NewRequest(http.MethodGet, "/", nil)
-	router.ServeHTTP(w, request)
+	req, _ := http.NewRequest(http.MethodGet, "/", nil)
+	router.ServeHTTP(w, req)
 	assert.Equal(t, http.StatusOK, w.Code)
-	//assert.Contains(t,w.Body.String(),"hello gin get method","返回的HTML页面中应该包含 hello gin get method")
+	assert.Contains(t, w.Body.String(), "hello gin get method", "返回的HTML页面中应该包含 hello gin get method")
 }
