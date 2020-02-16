@@ -18,3 +18,11 @@ func UserSaveByQuery(ctx *gin.Context) {
 	age := ctx.DefaultQuery("age", "27")
 	ctx.String(http.StatusOK, "用户:"+username+"年龄:"+age+"已经保存")
 }
+
+func UserRegister(ctx *gin.Context) {
+	email := ctx.PostForm("email")
+	password := ctx.DefaultPostForm("password", "123456")
+	passwordAgain := ctx.DefaultPostForm("password-again", "123456")
+	println("email", email, "password", password, "password again", passwordAgain)
+
+}
