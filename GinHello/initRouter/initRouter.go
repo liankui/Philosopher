@@ -8,6 +8,9 @@ import (
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
+	router.Static("/statics", "./statics")
+	router.StaticFile("/favicon.ico", "./favicon.ico")
+
 	if mode := gin.Mode(); mode == gin.TestMode {
 		router.LoadHTMLGlob("./../templates/*")
 	} else {
