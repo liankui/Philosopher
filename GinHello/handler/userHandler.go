@@ -3,9 +3,13 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/yueekee/Philosopher/GinHello/model"
+	"github.com/yueekee/Philosopher/GinHello/utils"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"time"
 )
 
 // user相关的转发接口
@@ -48,6 +52,7 @@ func UserLogin(context *gin.Context) {
 	}
 }
 
+// 点击右上角email，进入用户的详情页
 func UserProfile(ctx *gin.Context) {
 	id := ctx.Query("id")
 	var user model.UserModel
@@ -61,4 +66,36 @@ func UserProfile(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "user_profile.tmpl", gin.H{
 		"user": u,
 	})
+}
+
+func UpdateUserProfile(ctx *gin.Context) {
+	var user model.UserModel
+	if err := ctx.ShouldBind(&user); err != nil {
+		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+			"error": err,
+		})
+		log.Panicln("绑定发生错误", err.Error())
+	}
+	file, e := ctx.FormFile("avatar-file")
+	if e != nil {
+		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+			"error": e,
+		})
+		log.Panicln("绑定发生错误", e.Error())
+	}
+	path := utils.RootPath()
+	path = filepath.Join(path, "avatar") // 生成[path]/avatar
+	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+			"error": e,
+		})
+		log.Panicln("无法创建文件夹", e.Error())
+	}
+	fileName := strconv.FormatInt(time.Now().Unix(), 10) + file.Filename
+	if err := ctx.SaveUploadedFile(file, path+fileName); err != nil {
+		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+			"error": e,
+		})
+		log.Panicln("无法保存文件", e.Error())
+	}
 }
