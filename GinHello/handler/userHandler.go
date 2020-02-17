@@ -5,6 +5,7 @@ import (
 	"github.com/yueekee/Philosopher/GinHello/model"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 // user相关的转发接口
@@ -45,4 +46,19 @@ func UserLogin(context *gin.Context) {
 			"email": u.Email,
 		})
 	}
+}
+
+func UserProfile(ctx *gin.Context) {
+	id := ctx.Query("id")
+	var user model.UserModel
+	i, err := strconv.Atoi(id)
+	u, e := user.QueryById(i)
+	if err != nil || e != nil {
+		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+			"error": e,
+		})
+	}
+	ctx.HTML(http.StatusOK, "user_profile.tmpl", gin.H{
+		"user": u,
+	})
 }

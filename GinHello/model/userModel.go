@@ -1,6 +1,7 @@
 package model
 
 import (
+	"database/sql"
 	"github.com/yueekee/Philosopher/GinHello/initDB"
 	"log"
 )
@@ -9,7 +10,7 @@ type UserModel struct {
 	Id				int			`form:"id"`
 	Email			string		`form:"email" binding:"email"`
 	Password		string		`form:"password"`
-	PasswordAgain	string		`form:"password-again" binding:"eqfield=Password"`
+	Avatar			sql.NullString
 }
 
 // 增加用户
@@ -36,3 +37,14 @@ func (user *UserModel) QueryByEmail() UserModel {
 	}
 	return u
 }
+
+func (user *UserModel) QueryById(id int) (UserModel, error) {
+	u := UserModel{}
+	row := initDB.Db.QueryRow("select * from user where id = ?", id)
+	e := row.Scan(&u.Id, &u.Email, &u.Password)
+	if e != nil {
+		log.Println(e)
+	}
+	return u, e
+}
+
