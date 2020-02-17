@@ -9,6 +9,7 @@ import (
 	"net/http/httptest"
 	"net/url"
 	"strconv"
+	"strings"
 	"testing"
 )
 
@@ -72,4 +73,17 @@ func TestUserRegisterError(t *testing.T) {
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded; param=value")
 	router.ServeHTTP(w, request)
 	assert.Equal(t, http.StatusOK, w.Code)
+}
+
+func TestUserLogin(t *testing.T) {
+	email := "123@123.com"
+	value := url.Values{}
+	value.Add("email", email)
+	value.Add("password", "123")
+	w := httptest.NewRecorder()
+	request, _ := http.NewRequest(http.MethodPost, "/user/login", bytes.NewBufferString(value.Encode()))
+	request.Header.Add("Content-Type", "application/x-www-form-urlencoded; param=value")
+	router.ServeHTTP(w, request)
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, strings.Contains(w.Body.String(), email), true)
 }
