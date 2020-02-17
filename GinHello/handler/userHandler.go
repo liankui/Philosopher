@@ -3,6 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/yueekee/Philosopher/GinHello/model"
+	"log"
 	"net/http"
 )
 
@@ -23,10 +24,10 @@ func UserSaveByQuery(ctx *gin.Context) {
 func UserRegister(ctx *gin.Context) {
 	var user model.UserModel
 	if err := ctx.ShouldBind(&user); err != nil {
-		println("err ->", err.Error())
 		ctx.String(http.StatusBadRequest, "输入的数据不合法")
-	} else {
-		println("email", user.Email, "password", user.Password, "password again", user.PasswordAgain)
-		ctx.Redirect(http.StatusMovedPermanently, "/")
+		log.Panicln("err ->", err.Error())
 	}
+	id := user.Save()
+	log.Println("id is", id)
+	ctx.Redirect(http.StatusMovedPermanently, "/")
 }

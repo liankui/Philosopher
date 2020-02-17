@@ -3,7 +3,6 @@ package test
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
-	"github.com/yueekee/Philosopher/GinHello/initRouter"
 	"net/http"
 	"net/http/httptest"
 	"testing"

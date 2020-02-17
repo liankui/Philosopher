@@ -12,7 +12,7 @@ type UserModel struct {
 }
 
 // 增加用户
-func (user *UserModel) save() int64 {
+func (user *UserModel) Save() int64 {
 	result, e := initDB.Db.Exec("insert into ginhello.user (email, password) values (?,?);",
 		user.Email, user.Password)
 	if e != nil {
