@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/yueekee/Philosopher/GinHello/handler"
+	"github.com/yueekee/Philosopher/GinHello/handler/article"
 	"github.com/yueekee/Philosopher/GinHello/middleware"
 	"github.com/yueekee/Philosopher/GinHello/utils"
 	"net/http"
@@ -26,6 +27,12 @@ func SetupRouter() *gin.Engine {
 		router.LoadHTMLGlob("templates/*")
 	}
 	fmt.Println("os.Args:", os.Args)
+
+	articleRouter := router.Group("")
+	{
+		// 添加一篇文章
+		articleRouter.POST("/article", article.Insert)
+	}
 
 	userRouter := router.Group("/user")
 	{
