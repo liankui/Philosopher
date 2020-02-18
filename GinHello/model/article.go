@@ -11,8 +11,8 @@ type Article struct {
 	Content	string	`json:"content"`
 }
 
-func (article Article) Insert() int {
-	result, e := initDB.Db.Exec("insert into `article` (type, content) values (?,?)",
+func (article *Article) Insert() int {
+	result, e := initDB.Db.Exec("insert into `article` (type, content) values (?,?);",
 		article.Type, article.Content)
 	if e != nil {
 		log.Panicln("文章添加失败", e.Error())
