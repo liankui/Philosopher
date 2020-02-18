@@ -32,6 +32,8 @@ func SetupRouter() *gin.Engine {
 	{
 		// 获取单篇文章
 		articleRouter.GET("/:id", article.GetOne)
+		// 获取所有文章
+		articleRouter.GET("", article.GetAll)
 		// 添加一篇文章
 		articleRouter.POST("", article.Insert)
 	}

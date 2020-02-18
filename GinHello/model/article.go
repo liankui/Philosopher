@@ -28,3 +28,20 @@ func (article Article) FindById() Article {
 	}
 	return article
 }
+
+func (article *Article) FindAll() []Article {
+	rows, e := initDB.Db.Query("select * from `article`;")
+	if e != nil {
+		log.Panicln("FindAll发生错误", e.Error())
+	}
+
+	var articles []Article
+	for rows.Next() {
+		var a Article
+		if e := rows.Scan(&a.Id, &a.Type, &a.Content); e == nil {
+			articles = append(articles, a)
+		}
+	}
+
+	return articles
+}

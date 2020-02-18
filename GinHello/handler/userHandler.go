@@ -13,19 +13,19 @@ import (
 	"time"
 )
 
-func UserRegister(ctx *gin.Context) {
+func UserRegister(context *gin.Context) {
 	var user model.UserModel
-	if err := ctx.ShouldBind(&user); err != nil {
-		ctx.String(http.StatusBadRequest, "输入的数据不合法")
+	if err := context.ShouldBind(&user); err != nil {
+		context.String(http.StatusBadRequest, "输入的数据不合法")
 		log.Panicln("err ->", err.Error())
 	}
-	passwordAgain := ctx.PostForm("password-again")
+	passwordAgain := context.PostForm("password-again")
 	if passwordAgain != user.Password {
-		ctx.String(http.StatusBadRequest, "密码校验无效，两次密码不一致")
+		context.String(http.StatusBadRequest, "密码校验无效，两次密码不一致")
 		log.Panicln("密码校验无效，两次密码不一致")
 	}
 	user.Save()
-	ctx.Redirect(http.StatusMovedPermanently, "/")
+	context.Redirect(http.StatusMovedPermanently, "/")
 }
 
 func UserLogin(context *gin.Context) {
@@ -47,32 +47,32 @@ func UserLogin(context *gin.Context) {
 }
 
 // 点击右上角email，进入用户的详情页
-func UserProfile(ctx *gin.Context) {
-	id := ctx.Query("id")
+func UserProfile(context *gin.Context) {
+	id := context.Query("id")
 	var user model.UserModel
 	i, err := strconv.Atoi(id)
 	u, e := user.QueryById(i)
 	if err != nil || e != nil {
-		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+		context.HTML(http.StatusOK, "error.tmpl", gin.H{
 			"error": e,
 		})
 	}
-	ctx.HTML(http.StatusOK, "user_profile.tmpl", gin.H{
+	context.HTML(http.StatusOK, "user_profile.tmpl", gin.H{
 		"user": u,
 	})
 }
 
-func UpdateUserProfile(ctx *gin.Context) {
+func UpdateUserProfile(context *gin.Context) {
 	var user model.UserModel
-	if err := ctx.ShouldBind(&user); err != nil {
-		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+	if err := context.ShouldBind(&user); err != nil {
+		context.HTML(http.StatusOK, "error.tmpl", gin.H{
 			"error": err,
 		})
 		log.Panicln("绑定user发生错误", err.Error())
 	}
-	file, e := ctx.FormFile("avatar-file")
+	file, e := context.FormFile("avatar-file")
 	if e != nil {
-		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+		context.HTML(http.StatusOK, "error.tmpl", gin.H{
 			"error": e,
 		})
 		log.Panicln("绑定avatar-file发生错误", e.Error())
@@ -80,15 +80,15 @@ func UpdateUserProfile(ctx *gin.Context) {
 	path := utils.RootPath()
 	path = filepath.Join(path, "avatar") // 生成[path]/avatar
 	if err := os.MkdirAll(path, os.ModePerm); err != nil {
-		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+		context.HTML(http.StatusOK, "error.tmpl", gin.H{
 			"error": e,
 		})
 		log.Panicln("无法创建文件夹", e.Error())
 	}
 	fileName := strconv.FormatInt(time.Now().Unix(), 10) + file.Filename
 	path = filepath.Join(path, fileName)		// todo
-	if err := ctx.SaveUploadedFile(file, path); err != nil {
-		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+	if err := context.SaveUploadedFile(file, path); err != nil {
+		context.HTML(http.StatusOK, "error.tmpl", gin.H{
 			"error": e,
 		})
 		log.Panicln("无法保存文件", e.Error())
@@ -97,10 +97,10 @@ func UpdateUserProfile(ctx *gin.Context) {
 	avatarUrl := "http://localhost:8080/avatar/" + fileName
 	user.Avatar = sql.NullString{String:avatarUrl}
 	if err := user.Update(user.Id); err != nil {
-		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+		context.HTML(http.StatusOK, "error.tmpl", gin.H{
 			"error": e,
 		})
 		log.Panicln("数据无法更新", e.Error())
 	}
-	ctx.Redirect(http.StatusMovedPermanently, "/user/profile?id="+strconv.Itoa(user.Id))
+	context.Redirect(http.StatusMovedPermanently, "/user/profile?id="+strconv.Itoa(user.Id))
 }

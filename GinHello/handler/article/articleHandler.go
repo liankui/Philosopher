@@ -33,3 +33,11 @@ func GetOne(context *gin.Context) {
 		"article": artic,
 	})
 }
+
+func GetAll(context *gin.Context) {
+	article := model.Article{}
+	articles := article.FindAll()
+	context.JSON(http.StatusOK, gin.H{
+		"articles": articles,
+	})
+}
