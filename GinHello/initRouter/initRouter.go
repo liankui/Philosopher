@@ -4,13 +4,16 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/yueekee/Philosopher/GinHello/handler"
+	"github.com/yueekee/Philosopher/GinHello/middleware"
 	"github.com/yueekee/Philosopher/GinHello/utils"
 	"net/http"
 	"os"
 )
 
 func SetupRouter() *gin.Engine {
-	router := gin.Default()
+	router := gin.New()
+	router.Use(middleware.Logger(), gin.Recovery())
+	//router := gin.Default()
 
 	router.StaticFS("/avatar", http.Dir(utils.RootPath()+"avatar/"))
 	router.Static("/statics", "./statics")
