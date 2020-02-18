@@ -15,7 +15,7 @@ func RootPath() string {
 	if e != nil {
 		log.Panicln("发生错误", e.Error())
 	}
-	i := strings.LastIndex(s, "//")
+	i := strings.LastIndex(s, "\\")
 	path := s[0:i+1]
 	return path
 }

@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"database/sql"
 	"github.com/gin-gonic/gin"
 	"github.com/yueekee/Philosopher/GinHello/model"
 	"github.com/yueekee/Philosopher/GinHello/utils"
@@ -12,28 +13,18 @@ import (
 	"time"
 )
 
-// user相关的转发接口
-func UserSave(context *gin.Context) {
-	// 通过Param方法获取参数
-	username := context.Param("name")
-	context.String(http.StatusOK, "用户:"+username+"已经保存")
-}
-
-// 通过query方法获取参数
-func UserSaveByQuery(ctx *gin.Context) {
-	username := ctx.Query("name")
-	age := ctx.DefaultQuery("age", "27")
-	ctx.String(http.StatusOK, "用户:"+username+"年龄:"+age+"已经保存")
-}
-
 func UserRegister(ctx *gin.Context) {
 	var user model.UserModel
 	if err := ctx.ShouldBind(&user); err != nil {
 		ctx.String(http.StatusBadRequest, "输入的数据不合法")
 		log.Panicln("err ->", err.Error())
 	}
-	id := user.Save()
-	log.Println("id is", id)
+	passwordAgain := ctx.PostForm("password-again")
+	if passwordAgain != user.Password {
+		ctx.String(http.StatusBadRequest, "密码校验无效，两次密码不一致")
+		log.Panicln("密码校验无效，两次密码不一致")
+	}
+	user.Save()
 	ctx.Redirect(http.StatusMovedPermanently, "/")
 }
 
@@ -48,6 +39,7 @@ func UserLogin(context *gin.Context) {
 		log.Println("登录成功", u.Email)
 		context.HTML(http.StatusOK, "index.tmpl", gin.H{
 			"email": u.Email,
+			"id": u.Id,
 		})
 	}
 }
@@ -74,14 +66,14 @@ func UpdateUserProfile(ctx *gin.Context) {
 		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
 			"error": err,
 		})
-		log.Panicln("绑定发生错误", err.Error())
+		log.Panicln("绑定user发生错误", err.Error())
 	}
 	file, e := ctx.FormFile("avatar-file")
 	if e != nil {
 		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
 			"error": e,
 		})
-		log.Panicln("绑定发生错误", e.Error())
+		log.Panicln("绑定avatar-file发生错误", e.Error())
 	}
 	path := utils.RootPath()
 	path = filepath.Join(path, "avatar") // 生成[path]/avatar
@@ -92,10 +84,21 @@ func UpdateUserProfile(ctx *gin.Context) {
 		log.Panicln("无法创建文件夹", e.Error())
 	}
 	fileName := strconv.FormatInt(time.Now().Unix(), 10) + file.Filename
-	if err := ctx.SaveUploadedFile(file, path+fileName); err != nil {
+	path = filepath.Join(path, fileName)		// todo
+	if err := ctx.SaveUploadedFile(file, path); err != nil {
 		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
 			"error": e,
 		})
 		log.Panicln("无法保存文件", e.Error())
 	}
+
+	avatarUrl := "http://localhost:8080/avatar/" + fileName
+	user.Avatar = sql.NullString{String:avatarUrl}
+	if err := user.Update(user.Id); err != nil {
+		ctx.HTML(http.StatusOK, "error.tmpl", gin.H{
+			"error": e,
+		})
+		log.Panicln("数据无法更新", e.Error())
+	}
+	ctx.Redirect(http.StatusMovedPermanently, "/user/profile?id="+strconv.Itoa(user.Id))
 }

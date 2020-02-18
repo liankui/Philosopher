@@ -31,7 +31,7 @@ func (user *UserModel) Save() int64 {
 func (user *UserModel) QueryByEmail() UserModel {
 	u := UserModel{}
 	row := initDB.Db.QueryRow("select * from user where email = ?", user.Email)
-	e := row.Scan(&u.Id, &u.Email, &u.Password)
+	e := row.Scan(&u.Id, &u.Email, &u.Password, &u.Avatar)
 	if e != nil {
 		log.Println(e)
 	}
@@ -41,10 +41,22 @@ func (user *UserModel) QueryByEmail() UserModel {
 func (user *UserModel) QueryById(id int) (UserModel, error) {
 	u := UserModel{}
 	row := initDB.Db.QueryRow("select * from user where id = ?", id)
-	e := row.Scan(&u.Id, &u.Email, &u.Password)
+	e := row.Scan(&u.Id, &u.Email, &u.Password, &u.Avatar)
 	if e != nil {
 		log.Println(e)
 	}
 	return u, e
+}
+
+func (user *UserModel) Update(id int) error {
+	stmt, e := initDB.Db.Prepare("update user set password=?,avatar=? where id=?")
+	if e != nil {
+		log.Panicln("发生了错误", e.Error())
+	}
+	_, err := stmt.Exec(user.Password, user.Avatar.String, user.Id)
+	if err != nil {
+		log.Panicln("exec发生了错误", err.Error())
+	}
+	return err
 }
 

@@ -4,12 +4,15 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/yueekee/Philosopher/GinHello/handler"
+	"github.com/yueekee/Philosopher/GinHello/utils"
+	"net/http"
 	"os"
 )
 
 func SetupRouter() *gin.Engine {
 	router := gin.Default()
 
+	router.StaticFS("/avatar", http.Dir(utils.RootPath()+"avatar/"))
 	router.Static("/statics", "./statics")
 	router.StaticFile("/favicon.ico", "./favicon.ico")
 
@@ -23,11 +26,10 @@ func SetupRouter() *gin.Engine {
 
 	userRouter := router.Group("/user")
 	{
-		userRouter.GET("/:name", handler.UserSave)
-		userRouter.GET("", handler.UserSaveByQuery)
 		userRouter.POST("/register", handler.UserRegister)
 		userRouter.POST("/login", handler.UserLogin)
 		userRouter.GET("/profile/", handler.UserProfile)
+		userRouter.POST("/update", handler.UpdateUserProfile)
 	}
 
 	indexRouter := router.Group("/")
