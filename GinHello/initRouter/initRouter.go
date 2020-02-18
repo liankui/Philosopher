@@ -28,10 +28,12 @@ func SetupRouter() *gin.Engine {
 	}
 	fmt.Println("os.Args:", os.Args)
 
-	articleRouter := router.Group("")
+	articleRouter := router.Group("/article")
 	{
+		// 获取单篇文章
+		articleRouter.GET("/:id", article.GetOne)
 		// 添加一篇文章
-		articleRouter.POST("/article", article.Insert)
+		articleRouter.POST("", article.Insert)
 	}
 
 	userRouter := router.Group("/user")

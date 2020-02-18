@@ -20,3 +20,11 @@ func (article *Article) Insert() int {
 	i, _ := result.LastInsertId()
 	return int(i)
 }
+
+func (article Article) FindById() Article {
+	row := initDB.Db.QueryRow("select * from `article` where id = ?;", article.Id)
+	if e := row.Scan(&article.Id, &article.Type, &article.Content); e != nil {
+		log.Panicln("FindById发生错误", e.Error())
+	}
+	return article
+}
