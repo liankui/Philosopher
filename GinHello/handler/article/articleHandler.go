@@ -41,3 +41,18 @@ func GetAll(context *gin.Context) {
 		"articles": articles,
 	})
 }
+
+func DeleteOne(context *gin.Context) {
+	id := context.Param("id")
+	i, e := strconv.Atoi(id)
+	if e != nil {
+		log.Panicln("id不是int类型，id转化失败", e.Error())
+	}
+	article := model.Article{
+		Id: i,
+	}
+	artic := article.DeleteOne()
+	context.JSON(http.StatusOK, gin.H{
+		"article": artic,
+	})
+}

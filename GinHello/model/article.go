@@ -45,3 +45,11 @@ func (article *Article) FindAll() []Article {
 
 	return articles
 }
+
+func (article Article) DeleteOne() Article {
+	_, e := initDB.Db.Exec("delete from `article` where id = ?;", article.Id)
+	if e != nil {
+		log.Panicln("删除数据发生错误", e.Error())
+	}
+	return article
+}

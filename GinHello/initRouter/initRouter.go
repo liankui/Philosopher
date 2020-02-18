@@ -36,6 +36,8 @@ func SetupRouter() *gin.Engine {
 		articleRouter.GET("", article.GetAll)
 		// 添加一篇文章
 		articleRouter.POST("", article.Insert)
+		// 删除一篇文章
+		articleRouter.DELETE("/:id", article.DeleteOne)
 	}
 
 	userRouter := router.Group("/user")
