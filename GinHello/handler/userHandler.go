@@ -86,7 +86,7 @@ func UpdateUserProfile(context *gin.Context) {
 		log.Panicln("无法创建文件夹", e.Error())
 	}
 	fileName := strconv.FormatInt(time.Now().Unix(), 10) + file.Filename
-	path = filepath.Join(path, fileName)		// todo
+	path = filepath.Join(path, fileName)
 	if err := context.SaveUploadedFile(file, path); err != nil {
 		context.HTML(http.StatusOK, "error.tmpl", gin.H{
 			"error": e,

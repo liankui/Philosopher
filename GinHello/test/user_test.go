@@ -76,10 +76,10 @@ func TestUserRegisterError(t *testing.T) {
 }
 
 func TestUserLogin(t *testing.T) {
-	email := "123@123.com"
+	email := "1@1.com"
 	value := url.Values{}
 	value.Add("email", email)
-	value.Add("password", "123")
+	value.Add("password", "1@1")
 	w := httptest.NewRecorder()
 	request, _ := http.NewRequest(http.MethodPost, "/user/login", bytes.NewBufferString(value.Encode()))
 	request.Header.Add("Content-Type", "application/x-www-form-urlencoded; param=value")

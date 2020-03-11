@@ -4,12 +4,15 @@
 # * 'gtrp' and 'gtr' create a GET request with or without query parameters;
 # * 'ptr' and 'ptrp' create a POST request with a simple or parameter-like body;
 # * 'mptr' and 'fptr' create a POST request to submit a form with a text or file field (multipart/form-data);
-POST http://localhost:8080/article
-Content-Type: application/json
+
+POST http://localhost:8080/user/login
+Content-Type: text/plain; charset=utf-8
 
 {
-  "type": "go1",
-  "content": "hello go1"
+email: 12@12.com,
+password: 12@12
 }
 
 ###
+
+
